@@ -1,7 +1,12 @@
 import mongoose from 'mongoose'
-import { describe, expect, test } from '@jest/globals'
+import { describe, expect, test, beforeEach } from '@jest/globals'
 
-import { createPost } from '../services/posts.js'
+import {
+  createPost,
+  listAllPosts,
+  listPostsByAuthor,
+  listPostsByTag,
+} from '../services/posts.js'
 import { Post } from '../db/models/post.js'
 
 describe('creating posts', () => {
@@ -47,5 +52,50 @@ describe('creating posts', () => {
     const createdPost = await createPost(post)
 
     expect(createdPost._id).toBeInstanceOf(mongoose.Types.ObjectId)
+  })
+})
+
+const samplePosts = [
+  { title: 'Learning Redux', author: 'devCorrea', tags: ['redux'] },
+  { title: 'Learning React Hooks', author: 'devCorrea', tags: ['react'] },
+  {
+    title: 'Full-Stack React Projects',
+    author: 'devCorrea',
+    tags: ['react', 'nodejs'],
+  },
+  { title: 'Guide to typeScript' },
+  { title: 'Surfing in Ilhéus', author: 'leoPsy', tags: ['surf'] },
+  {
+    title: 'Tainha fishers, stop the surf',
+    author: 'tulioTatoo',
+    tags: ['surf'],
+  },
+]
+
+let createdSamplePosts = []
+
+beforeEach(async () => {
+  await Post.deleteMany({})
+  createdSamplePosts = []
+  for (const post of samplePosts) {
+    const createdPost = new Post(post)
+    createdSamplePosts.push(await createdPost.save())
+  }
+})
+
+describe('listing posts', () => {
+  test('should return all posts', async () => {
+    const posts = await listAllPosts()
+    expect(posts.length).toEqual(createdSamplePosts.length)
+  })
+
+  test('should return posts sorted by creation date descending by default', async () => {
+    const posts = await listAllPosts()
+    const sortedSamplePosts = createdSamplePosts.sort(
+      (a, b) => b.createdAt - a.createdAt,
+    )
+    expect(posts.map((post) => post.createdAt)).toEqual(
+      sortedSamplePosts.map((post) => post.createdAt),
+    )
   })
 })
