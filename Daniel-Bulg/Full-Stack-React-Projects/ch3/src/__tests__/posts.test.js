@@ -98,4 +98,29 @@ describe('listing posts', () => {
       sortedSamplePosts.map((post) => post.createdAt),
     )
   })
+
+  test('should take into account provided sorting options', async () => {
+    const posts = await listAllPosts({
+      sortBy: 'updatedAt',
+      sortOrder: 'ascending',
+    })
+    const sortedSamplePosts = createdSamplePosts.sort(
+      (a, b) => a.updatedAt - b.updatedAt,
+    )
+
+    expect(posts.map((post) => post.updatedAt)).toEqual(
+      sortedSamplePosts.map((post) => post.updatedAt),
+    )
+  })
+
+  test('should be able to filter posts by author', async () => {
+    const posts = await listPostsByAuthor('devCorrea')
+    expect(posts.length).toBe(3)
+  })
+
+  test('should be able to filter posts by tag', async () => {
+    const posts = await listPostsByTag('nodejs')
+
+    expect(posts.length).toBe(1)
+  })
 })
