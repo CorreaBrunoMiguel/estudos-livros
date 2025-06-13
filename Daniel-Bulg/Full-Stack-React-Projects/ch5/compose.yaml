@@ -1,24 +1,32 @@
 version: '3.9'
+networks:
+  blog-network:
 services:
   blog-database:
     image: mongo
     ports:
       - '27017:27017'
+    networks:
+      - blog-network
   blog-backend:
     build: backend/
     environment:
       - PORT=3001
-      - DATABASE_URL=mongodb://127.17.0.1:27017/blog
+      - DATABASE_URL=mongodb://blog-database:27017/blog
     ports:
       - '3001:3001'
     depends_on:
       - blog-database
+    networks:
+      - blog-network
   blog-frontend:
     build:
       context: .
       args:
-        VITE_BACKEND_URL: http://localhost:3001/api/v1
+        VITE_BACKEND_URL: http://blog-backend:3001/api/v1
     ports:
       - '3000:80'
     depends_on:
       - blog-backend
+    networks:
+      - blog-network
