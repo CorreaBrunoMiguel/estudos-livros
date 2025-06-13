@@ -37,5 +37,6 @@ async function listPosts(
   query = {},
   { sortBy = 'createdAt', sortOrder = 'descending' } = {},
 ) {
-  return await Post.find(query).sort({ [sortBy]: sortOrder })
+  const order = sortOrder === 'descending' ? -1 : 1
+  return await Post.find(query).sort({ [sortBy]: order })
 }
