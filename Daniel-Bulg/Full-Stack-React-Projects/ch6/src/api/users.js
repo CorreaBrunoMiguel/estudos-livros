@@ -8,3 +8,14 @@ export const signup = async ({ username, password }) => {
   if (!res.ok) throw new Error('Failed to sign up!')
   return await res.json()
 }
+
+export const login = async ({ username, password }) => {
+  const res = await fetch(`${import.meta.env.VITE_BACKEND_URL}/user/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/jsoon' },
+    body: JSON.stringify({ username, password }),
+  })
+
+  if (!res.ok) throw new Error('failed to login')
+  return await res.json()
+}
