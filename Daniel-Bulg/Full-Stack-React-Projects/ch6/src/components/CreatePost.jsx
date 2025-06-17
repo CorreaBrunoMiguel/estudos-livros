@@ -5,7 +5,7 @@ import { createPost } from '../api/posts.js'
 import { useAuth } from '../context/AuthContext.jsx'
 
 export function CreatePost() {
-  const token = useAuth()
+  const [token] = useAuth()
   const [title, setTitle] = useState('')
   const [contents, setContents] = useState('')
 
